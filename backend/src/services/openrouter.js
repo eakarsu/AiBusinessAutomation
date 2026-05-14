@@ -1,5 +1,6 @@
+const path = require('path');
 const axios = require('axios');
-require('dotenv').config({ path: '../../.env' });
+require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
