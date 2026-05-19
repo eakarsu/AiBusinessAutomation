@@ -127,6 +127,10 @@ app.use('/api/sop-rag', require('./routes/sopRagClassifier')); // apply pass 6 �
 app.use('/api/exception-stream', require('./routes/exceptionStreamDetector')); // apply pass 6 — audit custom suggestion
 
 app.use('/api/consultant-studio', require('./routes/consultantStudio')); // apply pass 6 — audit custom suggestion
+
+// === Custom Views (Automation Views) ===
+app.use('/api/custom-views', require('./routes/customViews'));
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

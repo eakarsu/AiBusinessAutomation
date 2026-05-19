@@ -14,6 +14,7 @@ import {
   AIToolboxPage,
   BacklogToolsPage,
 } from './pages/NewFeaturesPages';
+import CustomViewsPage from './pages/CustomViewsPage';
 
 // ============================================
 // TOAST NOTIFICATION SYSTEM
@@ -459,6 +460,7 @@ const Sidebar = ({ mobileOpen, onMobileClose }) => {
     { path: '/webhooks', icon: '📡', label: 'Webhooks' },
     { path: '/ai-toolbox', icon: '🧠', label: 'AI Toolbox' },
     { path: '/backlog-tools', icon: '🧰', label: 'Backlog Tools' },
+    { path: '/custom-views', icon: '🗂️', label: 'Automation Views' },
   ];
 
   return (
@@ -2188,6 +2190,7 @@ function App() {
                 <Route path="/webhooks" element={<ProtectedRoute><Layout><WebhooksPage /></Layout></ProtectedRoute>} />
                 <Route path="/ai-toolbox" element={<ProtectedRoute><Layout><AIToolboxPage /></Layout></ProtectedRoute>} />
                 <Route path="/backlog-tools" element={<ProtectedRoute><Layout><BacklogToolsPage /></Layout></ProtectedRoute>} />
+                <Route path="/custom-views" element={<ProtectedRoute><Layout><CustomViewsPage /></Layout></ProtectedRoute>} />
 
                 <Route path="/" element={<Navigate to="/dashboard" />} />
               </Routes>
