@@ -1,0 +1,97 @@
+{
+  "project": "AiBusinessAutomation",
+  "marker": "// === Batch 01 Gaps & Frontend Mounts ===",
+  "features": [
+    {
+      "slug": "multi-agent-orchestration-for-cross-system-busines",
+      "component": "MultiAgentOrchestrationForCrossSystemBusinesPage",
+      "label": "Multi-agent orchestration for cross-system business processes with audit trail",
+      "endpoint": "/api/cf-multi-agent-orchestration-for-cross-system-busines",
+      "kind": "cfs"
+    },
+    {
+      "slug": "rag-over-sops-and-policy-documents-to-auto-classif",
+      "component": "RagOverSopsAndPolicyDocumentsToAutoClassifPage",
+      "label": "RAG over SOPs and policy documents to auto-classify and route incoming work",
+      "endpoint": "/api/cf-rag-over-sops-and-policy-documents-to-auto-classif",
+      "kind": "cfs"
+    },
+    {
+      "slug": "real-time-exception-detection-with-corrective-work",
+      "component": "RealTimeExceptionDetectionWithCorrectiveWorkPage",
+      "label": "Real-time exception detection with corrective workflow suggestions",
+      "endpoint": "/api/cf-real-time-exception-detection-with-corrective-work",
+      "kind": "cfs"
+    },
+    {
+      "slug": "white-label-automation-studio-for-consultants-to-d",
+      "component": "WhiteLabelAutomationStudioForConsultantsToDPage",
+      "label": "White-label automation studio for consultants to deliver client-branded bots",
+      "endpoint": "/api/cf-white-label-automation-studio-for-consultants-to-d",
+      "kind": "cfs"
+    },
+    {
+      "slug": "despite-ai-js-aistream-js-route-files-0-mounted-ai",
+      "component": "DespiteAiJsAistreamJsRouteFiles0MountedAiPage",
+      "label": "Despite ai.js / aiStream.js route files, 0 mounted AI endpoints \u2014 AI layer missing",
+      "endpoint": "/api/gap-despite-ai-js-aistream-js-route-files-0-mounted-ai",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-process-mining-from-logs-to-suggest-automati",
+      "component": "NoAiProcessMiningFromLogsToSuggestAutomatiPage",
+      "label": "No AI process-mining from logs to suggest automations",
+      "endpoint": "/api/gap-no-ai-process-mining-from-logs-to-suggest-automati",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-document-extraction-invoices-pos-contracts",
+      "component": "NoAiDocumentExtractionInvoicesPosContractsPage",
+      "label": "No AI document-extraction (invoices, POs, contracts)",
+      "endpoint": "/api/gap-no-ai-document-extraction-invoices-pos-contracts",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-bot-builder-for-repetitive-tasks",
+      "component": "NoAiBotBuilderForRepetitiveTasksPage",
+      "label": "No AI bot-builder for repetitive tasks",
+      "endpoint": "/api/gap-no-ai-bot-builder-for-repetitive-tasks",
+      "kind": "gap"
+    },
+    {
+      "slug": "only-1-frontend-page-despite-29-backend-routes-sev",
+      "component": "Only1FrontendPageDespite29BackendRoutesSevPage",
+      "label": "Only 1 frontend page despite 29 backend routes \u2014 severe UI gap",
+      "endpoint": "/api/gap-only-1-frontend-page-despite-29-backend-routes-sev",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-drag-and-drop-workflow-designer",
+      "component": "NoDragAndDropWorkflowDesignerPage",
+      "label": "No drag-and-drop workflow designer",
+      "endpoint": "/api/gap-no-drag-and-drop-workflow-designer",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-rpa-recorder-for-screen-based-steps",
+      "component": "NoRpaRecorderForScreenBasedStepsPage",
+      "label": "No RPA recorder for screen-based steps",
+      "endpoint": "/api/gap-no-rpa-recorder-for-screen-based-steps",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-task-queue-dashboard-for-human-in-the-loop",
+      "component": "NoTaskQueueDashboardForHumanInTheLoopPage",
+      "label": "No task-queue dashboard for human-in-the-loop",
+      "endpoint": "/api/gap-no-task-queue-dashboard-for-human-in-the-loop",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-direct-enterprise-system-api-clients-salesforce",
+      "component": "NoDirectEnterpriseSystemApiClientsSalesforcePage",
+      "label": "No direct enterprise-system API clients (Salesforce, NetSuite) \u2014 only generic webhook",
+      "endpoint": "/api/gap-no-direct-enterprise-system-api-clients-salesforce",
+      "kind": "gap"
+    }
+  ]
+}

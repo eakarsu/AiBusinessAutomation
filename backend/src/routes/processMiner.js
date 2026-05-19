@@ -4,6 +4,15 @@ const pool = require('../config/database');
 const authMiddleware = require('../middleware/auth');
 const { addStandardRoutes } = require('../middleware/routeHelper');
 const aiService = require('../services/openrouter');
+const { body, validationResult } = require('express-validator');
+
+function validate(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  return null;
+}
 
 // Standard routes: paginated list, bulk ops, export
 addStandardRoutes(router, { table: 'process_mining', searchable: ['name', 'description'], filterable: ['status', 'process_type', 'department', 'complexity'], label: 'process' });
@@ -24,20 +33,32 @@ router.get('/:id', authMiddleware, async (req, res) => {
 });
 
 // Create new process mining analysis
-router.post('/', authMiddleware, async (req, res) => {
-  try {
-    const { name, description, process_type, event_log, department, complexity } = req.body;
-    const result = await pool.query(
-      `INSERT INTO process_mining (name, description, process_type, event_log, department, complexity, status, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7) RETURNING *`,
-      [name, description, process_type, event_log, department, complexity || 'medium', req.user.id]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error('Error creating process:', error);
-    res.status(500).json({ error: 'Internal server error' });
+router.post('/',
+  authMiddleware,
+  [
+    body('name').notEmpty().withMessage('name is required').isString().trim(),
+    body('description')
+      .optional()
+      .isString()
+      .isLength({ max: 5000 }).withMessage('description must be 5000 characters or fewer')
+      .trim()
+  ],
+  async (req, res) => {
+    if (validate(req, res)) return;
+    try {
+      const { name, description, process_type, event_log, department, complexity } = req.body;
+      const result = await pool.query(
+        `INSERT INTO process_mining (name, description, process_type, event_log, department, complexity, status, created_by)
+         VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7) RETURNING *`,
+        [name, description, process_type, event_log, department, complexity || 'medium', req.user.id]
+      );
+      res.status(201).json(result.rows[0]);
+    } catch (error) {
+      console.error('Error creating process:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
   }
-});
+);
 
 // Update process mining analysis
 router.put('/:id', authMiddleware, async (req, res) => {

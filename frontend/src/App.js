@@ -1,6 +1,20 @@
 import React, { useState, useEffect, useCallback, useRef, createContext, useContext, Component } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams, Link } from 'react-router-dom';
 import api from './services/api';
+import {
+  WorkflowTriggersPage,
+  BottleneckHeatmapPage,
+  AnomalyDetectionPage,
+  WorkflowBuilderPage,
+  ComplianceWatchdogPage,
+  ProcessAnalyticsPage,
+  NotificationsPage,
+  AIStreamPage,
+  WebhooksPage,
+  AIToolboxPage,
+  BacklogToolsPage,
+} from './pages/NewFeaturesPages';
+import CustomViewsPage from './pages/CustomViewsPage';
 
 // ============================================
 // TOAST NOTIFICATION SYSTEM
@@ -434,6 +448,19 @@ const Sidebar = ({ mobileOpen, onMobileClose }) => {
     { path: '/rpa-scripts', icon: '🤖', label: 'RPA Scripts' },
     { path: '/exception-handler', icon: '🚨', label: 'Exception Handler' },
     { path: '/roi-calculator', icon: '💹', label: 'ROI Calculator' },
+    // ===== NEW (Audit-driven) =====
+    { path: '/process-analytics', icon: '📊', label: 'Process Analytics' },
+    { path: '/notifications', icon: '🔔', label: 'Notifications' },
+    { path: '/ai-stream', icon: '🌊', label: 'AI Streaming' },
+    { path: '/workflow-triggers', icon: '⏰', label: 'Workflow Triggers' },
+    { path: '/bottleneck-heatmap', icon: '🔥', label: 'Bottleneck Heatmap' },
+    { path: '/anomaly-detection', icon: '🚨', label: 'Anomaly Detection' },
+    { path: '/workflow-builder', icon: '💬', label: 'NL Workflow Builder' },
+    { path: '/compliance-watchdog', icon: '🛡️', label: 'Compliance Watchdog' },
+    { path: '/webhooks', icon: '📡', label: 'Webhooks' },
+    { path: '/ai-toolbox', icon: '🧠', label: 'AI Toolbox' },
+    { path: '/backlog-tools', icon: '🧰', label: 'Backlog Tools' },
+    { path: '/custom-views', icon: '🗂️', label: 'Automation Views' },
   ];
 
   return (
@@ -2150,6 +2177,20 @@ function App() {
                     />
                   </React.Fragment>
                 ))}
+
+                {/* ===== Proposed NEW features (audit-driven) ===== */}
+                <Route path="/process-analytics" element={<ProtectedRoute><Layout><ProcessAnalyticsPage /></Layout></ProtectedRoute>} />
+                <Route path="/notifications" element={<ProtectedRoute><Layout><NotificationsPage /></Layout></ProtectedRoute>} />
+                <Route path="/ai-stream" element={<ProtectedRoute><Layout><AIStreamPage /></Layout></ProtectedRoute>} />
+                <Route path="/workflow-triggers" element={<ProtectedRoute><Layout><WorkflowTriggersPage /></Layout></ProtectedRoute>} />
+                <Route path="/bottleneck-heatmap" element={<ProtectedRoute><Layout><BottleneckHeatmapPage /></Layout></ProtectedRoute>} />
+                <Route path="/anomaly-detection" element={<ProtectedRoute><Layout><AnomalyDetectionPage /></Layout></ProtectedRoute>} />
+                <Route path="/workflow-builder" element={<ProtectedRoute><Layout><WorkflowBuilderPage /></Layout></ProtectedRoute>} />
+                <Route path="/compliance-watchdog" element={<ProtectedRoute><Layout><ComplianceWatchdogPage /></Layout></ProtectedRoute>} />
+                <Route path="/webhooks" element={<ProtectedRoute><Layout><WebhooksPage /></Layout></ProtectedRoute>} />
+                <Route path="/ai-toolbox" element={<ProtectedRoute><Layout><AIToolboxPage /></Layout></ProtectedRoute>} />
+                <Route path="/backlog-tools" element={<ProtectedRoute><Layout><BacklogToolsPage /></Layout></ProtectedRoute>} />
+                <Route path="/custom-views" element={<ProtectedRoute><Layout><CustomViewsPage /></Layout></ProtectedRoute>} />
 
                 <Route path="/" element={<Navigate to="/dashboard" />} />
               </Routes>
