@@ -15,6 +15,12 @@ import {
   BacklogToolsPage,
 } from './pages/NewFeaturesPages';
 import CustomViewsPage from './pages/CustomViewsPage';
+import ExceptionCostAttribution from './pages/ExceptionCostAttribution';
+
+import CodexCustomVizFeature from './pages/CodexCustomVizFeature';
+import CodexOperationsFeature from './pages/CodexOperationsFeature';
+
+import TimelineView from './pages/TimelineView';
 
 // ============================================
 // TOAST NOTIFICATION SYSTEM
@@ -2140,6 +2146,10 @@ function App() {
           <ErrorBoundary>
             <div className="app">
               <Routes>
+        <Route path="/insights/timeline" element={<ProtectedRoute><TimelineView /></ProtectedRoute>} />
+        <Route path="/codex/custom-viz" element={<ProtectedRoute><CodexCustomVizFeature /></ProtectedRoute>} />
+        <Route path="/codex/operations" element={<ProtectedRoute><CodexOperationsFeature /></ProtectedRoute>} />
+
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
@@ -2191,6 +2201,7 @@ function App() {
                 <Route path="/ai-toolbox" element={<ProtectedRoute><Layout><AIToolboxPage /></Layout></ProtectedRoute>} />
                 <Route path="/backlog-tools" element={<ProtectedRoute><Layout><BacklogToolsPage /></Layout></ProtectedRoute>} />
                 <Route path="/custom-views" element={<ProtectedRoute><Layout><CustomViewsPage /></Layout></ProtectedRoute>} />
+                <Route path="/exception-cost-attribution" element={<ProtectedRoute><Layout><ExceptionCostAttribution /></Layout></ProtectedRoute>} />
 
                 <Route path="/" element={<Navigate to="/dashboard" />} />
               </Routes>
