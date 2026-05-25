@@ -30,10 +30,19 @@ function addStandardRoutes(router, config) {
 
         // Fetch page
         const dataParams = [...params, limit, offset];
-        const dataResult = await pool.query(
-          `SELECT * FROM ${table} ${whereClause} ORDER BY ${sortField} ${sortOrder} LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
-          dataParams
-        );
+        let dataResult;
+        try {
+          dataResult = await pool.query(
+            `SELECT * FROM ${table} ${whereClause} ORDER BY ${sortField} ${sortOrder} LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+            dataParams
+          );
+        } catch (error) {
+          if (error.code !== '42703') throw error;
+          dataResult = await pool.query(
+            `SELECT * FROM ${table} ${whereClause} ORDER BY id ${sortOrder} LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+            dataParams
+          );
+        }
 
         res.json({
           data: dataResult.rows,

@@ -818,7 +818,7 @@ const ListPage = ({ title, endpoint, columns, icon, formFields }) => {
     setSearch('');
     setDebouncedSearch('');
     setFilters({});
-    setSort({ field: 'created_at', order: 'DESC' });
+    setSort({ field: pageConfigs[endpoint]?.defaultSort || 'created_at', order: 'DESC' });
     setSelectedIds([]);
     setPagination({ page: 1, limit: 15, total: 0, totalPages: 0 });
   }, [endpoint]);
@@ -1670,6 +1670,7 @@ const pageConfigs = {
   },
   emails: {
     title: 'Emails', icon: '📧',
+    defaultSort: 'received_at',
     columns: [
       { key: 'subject', label: 'Subject' }, { key: 'from_address', label: 'From' },
       { key: 'category', label: 'Category' }, { key: 'priority', label: 'Priority' }, { key: 'status', label: 'Status' },
@@ -2140,7 +2141,7 @@ const pageConfigs = {
 // ============================================
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <ToastProvider>
           <ErrorBoundary>

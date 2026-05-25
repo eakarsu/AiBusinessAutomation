@@ -109,6 +109,7 @@ async function createTables() {
       assigned_to INTEGER REFERENCES users(id),
       ai_analysis TEXT,
       received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -394,6 +395,7 @@ async function createTables() {
     DO $$ BEGIN
       ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255);
       ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMP;
+      ALTER TABLE emails ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
     EXCEPTION WHEN others THEN NULL;
     END $$;
   `);

@@ -35,7 +35,7 @@ const queryBuilder = ({ table, searchable = [], filterable = [], defaultSort = '
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     // Validate sort field: only allow alphanumeric and underscores
-    const safeSortField = /^[a-zA-Z_]+$/.test(sortField) ? sortField : 'created_at';
+    const safeSortField = /^[a-zA-Z_]+$/.test(sortField) ? sortField : defaultSort;
 
     req.queryOptions = {
       table,
