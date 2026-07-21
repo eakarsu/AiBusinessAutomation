@@ -22,10 +22,11 @@ router.post('/login', async (req, res) => {
     if (!validPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+    if (!user.tenant_id) return res.status(403).json({ error: 'Account has not been assigned to a tenant' });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role, name: user.name },
-      process.env.JWT_SECRET || 'your-secret-key',
+      { id: user.id, email: user.email, role: user.role, name: user.name, tenantId: user.tenant_id },
+      process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -35,7 +36,8 @@ router.post('/login', async (req, res) => {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role
+        role: user.role,
+        tenantId: user.tenant_id
       }
     });
   } catch (error) {
@@ -56,8 +58,8 @@ router.post('/register', async (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    if (password.length < 12) {
+      return res.status(400).json({ error: 'Password must be at least 12 characters' });
     }
     if (name.length < 2) {
       return res.status(400).json({ error: 'Name must be at least 2 characters' });
@@ -71,20 +73,20 @@ router.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      `INSERT INTO users (email, password, name, role) VALUES ($1, $2, $3, 'user') RETURNING id, email, name, role`,
-      [email, hashedPassword, name]
+      `INSERT INTO users (email, password, name, role, tenant_id) VALUES ($1, $2, $3, 'user', $4) RETURNING id, email, name, role, tenant_id`,
+      [email, hashedPassword, name, crypto.randomUUID()]
     );
 
     const user = result.rows[0];
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role, name: user.name },
-      process.env.JWT_SECRET || 'your-secret-key',
+      { id: user.id, email: user.email, role: user.role, name: user.name, tenantId: user.tenant_id },
+      process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
     res.status(201).json({
       token,
-      user: { id: user.id, email: user.email, name: user.name, role: user.role }
+      user: { id: user.id, email: user.email, name: user.name, role: user.role, tenantId: user.tenant_id }
     });
   } catch (error) {
     console.error('Register error:', error);
@@ -117,7 +119,7 @@ router.post('/forgot-password', async (req, res) => {
     // In production, send email. For demo, return token directly.
     res.json({
       message: 'If that email is registered, a reset token has been generated',
-      resetToken // Remove in production - included for demo purposes
+      delivery: 'out_of_band'
     });
   } catch (error) {
     console.error('Forgot password error:', error);
@@ -132,8 +134,8 @@ router.post('/reset-password', async (req, res) => {
     if (!token || !newPassword) {
       return res.status(400).json({ error: 'Token and new password are required' });
     }
-    if (newPassword.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    if (newPassword.length < 12) {
+      return res.status(400).json({ error: 'Password must be at least 12 characters' });
     }
 
     const result = await pool.query(
@@ -179,8 +181,8 @@ router.post('/logout', authMiddleware, async (req, res) => {
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, email, name, role, created_at, updated_at FROM users WHERE id = $1',
-      [req.user.id]
+      'SELECT id, email, name, role, tenant_id, created_at, updated_at FROM users WHERE id = $1 AND tenant_id = $2',
+      [req.user.id, req.user.tenantId]
     );
 
     if (result.rows.length === 0) {
@@ -201,7 +203,7 @@ router.put('/profile', authMiddleware, async (req, res) => {
     const userId = req.user.id;
 
     // Get current user data
-    const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+    const userResult = await pool.query('SELECT * FROM users WHERE id = $1 AND tenant_id = $2', [userId, req.user.tenantId]);
     if (userResult.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -216,8 +218,8 @@ router.put('/profile', authMiddleware, async (req, res) => {
       if (!validPassword) {
         return res.status(400).json({ error: 'Current password is incorrect' });
       }
-      if (newPassword.length < 6) {
-        return res.status(400).json({ error: 'New password must be at least 6 characters' });
+      if (newPassword.length < 12) {
+        return res.status(400).json({ error: 'New password must be at least 12 characters' });
       }
     }
 
@@ -257,9 +259,10 @@ router.put('/profile', authMiddleware, async (req, res) => {
 
     updates.push(`updated_at = NOW()`);
     params.push(userId);
+    params.push(req.user.tenantId);
 
     const result = await pool.query(
-      `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramIdx} RETURNING id, email, name, role, created_at, updated_at`,
+      `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramIdx++} AND tenant_id = $${paramIdx} RETURNING id, email, name, role, tenant_id, created_at, updated_at`,
       params
     );
 

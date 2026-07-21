@@ -1,0 +1,12 @@
+'use strict'; const test = require('node:test'); const assert = require('node:assert/strict'); const p = require('../src/domain/automationWorkflow');
+const workflow = () => ({ name: 'invoice', version: '1', ownerId: 'u', dataPolicy: { retentionDays: 30, lawfulBasis: 'contract', containsPersonalData: true }, steps: [{ id: 's1', type: 'extract', effect: 'read' }] });
+test('workflow is validated and hashed', () => assert.equal(p.validateWorkflow(workflow()).state, 'validated'));
+test('writes need compensation', () => assert.throws(() => p.validateWorkflow({ ...workflow(), steps: [{ id: 's', type: 'erp', effect: 'write' }] }), /compensation/));
+test('approval must be independent', () => assert.throws(() => p.transition('approval_pending', 'approved', { requesterId: 'u', approverId: 'u' }), /independent/));
+test('approved execution needs receipt', () => assert.throws(() => p.transition('queued', 'executing', { requiresApproval: true }), /approval_required/));
+test('cross-tenant access fails', () => assert.throws(() => p.requireScope({ tenantId: 'x', role: 'admin' }, 'y', 'read'), /tenant_scope/));
+test('delivery is payload bound', () => assert.throws(() => p.delivery('salesforce', 'create', { x: 1 }, 'i', { payloadHash: 'bad' }), /payload_mismatch/));
+test('delivery starts queued', () => assert.equal(p.delivery('salesforce', 'create', { x: 1 }, 'i').state, 'queued'));
+test('delivery rejects unimplemented connectors before enqueue', () => assert.throws(() => p.delivery('generic-erp', 'create', {}, 'i'), /unsupported_connector/));
+test('eval catches recovery regression', () => assert.deepEqual(p.evaluate({ correctness: 1, latencyMs: 2, recoveryRate: .7, outcomeRate: 1 }, { correctness: .9, latencyMs: 3, recoveryRate: .8, outcomeRate: .9 }).failures, ['recovery']));
+test('eval fails closed on incomplete acceptance evidence', () => assert.throws(() => p.evaluate({ correctness: 1 }, { correctness: .9 }), /complete_finite_evaluation/));

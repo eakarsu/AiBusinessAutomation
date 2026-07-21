@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
+const crypto = require('node:crypto');
 require('dotenv').config({ path: '../.env' });
 
 const pool = new Pool({
@@ -19,6 +20,7 @@ async function createTables() {
       password VARCHAR(255) NOT NULL,
       name VARCHAR(255) NOT NULL,
       role VARCHAR(50) DEFAULT 'user',
+      tenant_id UUID,
       reset_token VARCHAR(255),
       reset_token_expires TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -406,6 +408,7 @@ async function createTables() {
 async function seedData() {
   // Hash password
   const hashedPassword = await bcrypt.hash('admin123', 10);
+  const demoTenantId = crypto.randomUUID();
 
   // Seed users (15 users)
   const userResult = await pool.query(`
@@ -428,6 +431,8 @@ async function seedData() {
     ON CONFLICT (email) DO NOTHING
     RETURNING id
   `, [process.env.DEFAULT_ADMIN_EMAIL || 'admin@company.com', hashedPassword]);
+
+  await pool.query('UPDATE users SET tenant_id = $1 WHERE tenant_id IS NULL', [demoTenantId]);
 
   const userId = userResult.rows[0]?.id || 1;
 
@@ -872,3 +877,4 @@ async function main() {
 }
 
 main();
+if (process.env.ALLOW_DEMO_SEED !== 'true') { console.error('Demo seed refused; set ALLOW_DEMO_SEED=true explicitly.'); process.exit(64); }
