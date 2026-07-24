@@ -2,9 +2,9 @@ const path = require('path');
 const axios = require('axios');
 require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
-const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'anthropic/claude-haiku-4.5';
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY?.trim();
+const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL?.trim().replace(/\/$/, '');
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL?.trim();
 
 const openRouterClient = axios.create({
   baseURL: OPENROUTER_BASE_URL,
@@ -18,6 +18,11 @@ const openRouterClient = axios.create({
 
 const aiService = {
   async generateCompletion(prompt, systemPrompt = '', model = OPENROUTER_MODEL) {
+    if (!OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is required');
+    if (!OPENROUTER_MODEL) throw new Error('OPENROUTER_MODEL is required');
+    if (OPENROUTER_BASE_URL !== 'https://openrouter.ai/api/v1') {
+      throw new Error('OPENROUTER_BASE_URL must be https://openrouter.ai/api/v1');
+    }
     try {
       const response = await openRouterClient.post('/chat/completions', {
         model,
@@ -28,7 +33,9 @@ const aiService = {
         max_tokens: 1500,
         temperature: 0.7
       });
-      return response.data.choices[0].message.content;
+      const content = response.data?.choices?.[0]?.message?.content;
+      if (typeof content !== 'string' || !content.trim()) throw new Error('OpenRouter returned an empty response');
+      return content;
     } catch (error) {
       console.error('OpenRouter API Error:', error.response?.data || error.message);
       throw new Error('AI service unavailable');
