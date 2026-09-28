@@ -334,7 +334,7 @@ const LoginPage = () => {
         {mode === 'login' && (
           <>
             <button onClick={handleAutoFill} className="btn btn-autofill">
-              Click to Auto-fill Demo Credentials
+              Auto Fill Demo Credentials
             </button>
             <form onSubmit={handleLogin}>
               <div className="form-group">

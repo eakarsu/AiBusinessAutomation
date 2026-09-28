@@ -74,6 +74,12 @@ case "${1:-all}" in
     wait "$backend_pid" "$frontend_pid"
     ;;
   backend) cd "$ROOT/backend"; exec npm start;;
-  frontend) cd "$ROOT/frontend"; exec env HOST="${FRONTEND_HOST:-127.0.0.1}" PORT="${FRONTEND_PORT:-3000}" REACT_APP_API_URL="${REACT_APP_API_URL:-http://127.0.0.1:${BACKEND_PORT:-5001}/api}" BROWSER=none npm start;;
+  frontend)
+    api_base="${REACT_APP_API_URL:-http://127.0.0.1:${BACKEND_PORT:-5001}/api}"
+    api_base="${api_base%/}"
+    case "$api_base" in */api) ;; *) api_base="$api_base/api";; esac
+    cd "$ROOT/frontend"
+    exec env HOST="${FRONTEND_HOST:-127.0.0.1}" PORT="${FRONTEND_PORT:-3000}" REACT_APP_API_URL="$api_base" BROWSER=none npm start
+    ;;
   *) echo "Usage: $0 [all|backend|frontend]" >&2; exit 64;;
 esac
