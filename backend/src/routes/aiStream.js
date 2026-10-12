@@ -188,7 +188,7 @@ The script should be complete, runnable, and include comments.`;
         [scriptName, task_description, platform, generatedScript, 'generated', req.user.id]
       );
 
-      res.status(201).json({
+      res.status(200).json({
         script: result.rows[0],
         generated_script: generatedScript,
         platform

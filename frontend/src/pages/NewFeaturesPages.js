@@ -1,3 +1,6 @@
+
+import FullAIExamples, { useFullAIExamples } from "../components/FullAIExamples.jsx";
+import FormattedAIReport from "../components/FormattedAIReport";
 /**
  * Pages for the audit's NEW proposed features + production improvement modules.
  *  - WorkflowTriggersPage
@@ -27,6 +30,8 @@ function Spinner() {
 // 1. Workflow Triggers Page
 // =========================================================================
 export function WorkflowTriggersPage() {
+  const fullAIExamples = useFullAIExamples();
+
   const [triggers, setTriggers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ workflow_id: '', trigger_type: 'cron', schedule_or_condition: '', action: '' });
@@ -63,20 +68,20 @@ export function WorkflowTriggersPage() {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24 }} data-full-ai-workspace="WorkflowTriggersPage"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <h1 style={h1}>⏰ Workflow Trigger Engine</h1>
       <p style={subText}>Define cron/condition/event triggers that automatically fire workflow actions.</p>
 
       <div style={card}>
         <h3 style={{ color: '#e2e8f0' }}>+ New Trigger</h3>
-        <input style={input} placeholder="Workflow ID" value={form.workflow_id} onChange={e => setForm({ ...form, workflow_id: e.target.value })} />
-        <select style={input} value={form.trigger_type} onChange={e => setForm({ ...form, trigger_type: e.target.value })}>
+        <input style={input} placeholder="Workflow ID" value={form.workflow_id} onChange={e => setForm({ ...form, workflow_id: e.target.value })} data-full-ai-field={fullAIExamples.bind({ current: form.workflow_id, change: e => setForm({ ...form, workflow_id: e.target.value }), label: "form.workflow_id", manual: false, json: false, sample: '' }, "p1-3188", undefined)} />
+        <select style={input} value={form.trigger_type} onChange={e => setForm({ ...form, trigger_type: e.target.value })} data-full-ai-field={fullAIExamples.bind({ current: form.trigger_type, change: e => setForm({ ...form, trigger_type: e.target.value }), label: "form.trigger_type", manual: false, json: false, sample: 'cron' }, "p1-3337", undefined)}>
           <option value="cron">cron</option>
           <option value="condition">condition</option>
           <option value="event">event</option>
         </select>
-        <input style={input} placeholder="Schedule (cron expression) or condition" value={form.schedule_or_condition} onChange={e => setForm({ ...form, schedule_or_condition: e.target.value })} />
-        <input style={input} placeholder="Action (e.g. send_email, create_task, update_record)" value={form.action} onChange={e => setForm({ ...form, action: e.target.value })} />
+        <input style={input} placeholder="Schedule (cron expression) or condition" value={form.schedule_or_condition} onChange={e => setForm({ ...form, schedule_or_condition: e.target.value })} data-full-ai-field={fullAIExamples.bind({ current: form.schedule_or_condition, change: e => setForm({ ...form, schedule_or_condition: e.target.value }), label: "form.schedule_or_condition", manual: false, json: false, sample: '' }, "p1-3626", undefined)} />
+        <input style={input} placeholder="Action (e.g. send_email, create_task, update_record)" value={form.action} onChange={e => setForm({ ...form, action: e.target.value })} data-full-ai-field={fullAIExamples.bind({ current: form.action, change: e => setForm({ ...form, action: e.target.value }), label: "form.action", manual: false, json: false, sample: '' }, "p1-3823", undefined)} />
         <button style={btn} onClick={create} disabled={saving}>{saving ? 'Saving...' : 'Create Trigger'}</button>
         {msg && <p style={{ color: '#a5b4fc', marginTop: 12 }}>{msg}</p>}
       </div>
@@ -158,6 +163,8 @@ export function BottleneckHeatmapPage() {
 // 3. Anomaly Detection Page
 // =========================================================================
 export function AnomalyDetectionPage() {
+  const fullAIExamples = useFullAIExamples();
+
   const [form, setForm] = useState({ amount: '', category: '', vendor: '' });
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -172,14 +179,14 @@ export function AnomalyDetectionPage() {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24 }} data-full-ai-workspace="AnomalyDetectionPage"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <h1 style={h1}>🚨 Live Expense Anomaly Detection</h1>
       <p style={subText}>Compare a new expense against the 90-day rolling history. Flags z-score &gt; 2 or +40% over avg.</p>
 
       <div style={card}>
-        <input style={input} placeholder="Amount (USD)" type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} />
-        <input style={input} placeholder="Category (must match an expenses.category)" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
-        <input style={input} placeholder="Vendor (optional)" value={form.vendor} onChange={e => setForm({ ...form, vendor: e.target.value })} />
+        <input style={input} placeholder="Amount (USD)" type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} data-full-ai-field={fullAIExamples.bind({ current: form.amount, change: e => setForm({ ...form, amount: e.target.value }), label: "form.amount", manual: false, json: false, sample: '' }, "p1-8602", undefined)} />
+        <input style={input} placeholder="Category (must match an expenses.category)" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} data-full-ai-field={fullAIExamples.bind({ current: form.category, change: e => setForm({ ...form, category: e.target.value }), label: "form.category", manual: false, json: false, sample: '' }, "p1-8756", undefined)} />
+        <input style={input} placeholder="Vendor (optional)" value={form.vendor} onChange={e => setForm({ ...form, vendor: e.target.value })} data-full-ai-field={fullAIExamples.bind({ current: form.vendor, change: e => setForm({ ...form, vendor: e.target.value }), label: "form.vendor", manual: false, json: false, sample: '' }, "p1-8930", undefined)} />
         <button style={btn} onClick={check} disabled={loading || !form.amount || !form.category}>
           {loading ? 'Checking...' : 'Run Anomaly Check'}
         </button>
@@ -190,7 +197,7 @@ export function AnomalyDetectionPage() {
           <h3 style={{ color: result.is_anomaly ? '#ef4444' : '#22c55e' }}>
             {result.is_anomaly ? '⚠ Anomaly detected' : '✓ Within normal range'}
           </h3>
-          <pre style={pre}>{JSON.stringify(result, null, 2)}</pre>
+          <FormattedAIReport response={result} />
         </div>
       )}
     </div>
@@ -201,6 +208,8 @@ export function AnomalyDetectionPage() {
 // 4. Workflow Builder Page (NL → workflow)
 // =========================================================================
 export function WorkflowBuilderPage() {
+  const fullAIExamples = useFullAIExamples();
+
   const [description, setDescription] = useState('');
   const [save, setSave] = useState(false);
   const [out, setOut] = useState(null);
@@ -216,7 +225,7 @@ export function WorkflowBuilderPage() {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24 }} data-full-ai-workspace="WorkflowBuilderPage"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <h1 style={h1}>💬 Natural-Language Workflow Builder</h1>
       <p style={subText}>Describe a business process in plain English; AI proposes a structured workflow.</p>
 
@@ -225,10 +234,10 @@ export function WorkflowBuilderPage() {
           style={{ ...input, minHeight: 120 }}
           placeholder='e.g. "When a vendor invoice arrives by email, classify it, route to AP for review, request approval if &gt; $10k, then schedule payment 30 days out."'
           value={description}
-          onChange={e => setDescription(e.target.value)}
+          onChange={e => setDescription(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: description, change: e => setDescription(e.target.value), label: "description", manual: false, json: false, sample: '' }, "p1-10533", undefined)}
         />
         <label style={{ color: '#cbd5e1', display: 'block', marginBottom: 12 }}>
-          <input type="checkbox" checked={save} onChange={e => setSave(e.target.checked)} /> Save as draft workflow
+          <input type="checkbox" checked={save} onChange={e => setSave(e.target.checked)} data-full-ai-field={fullAIExamples.bind({ current: save, change: e => setSave(e.target.checked), label: "save", manual: false, json: false, sample: false }, "p1-10953", undefined)} /> Save as draft workflow
         </label>
         <button style={btn} onClick={build} disabled={loading || !description.trim()}>
           {loading ? 'Building...' : 'Build Workflow'}
@@ -241,19 +250,19 @@ export function WorkflowBuilderPage() {
           {out.parsed && (
             <div>
               <h4 style={{ color: '#a5b4fc' }}>Parsed</h4>
-              <pre style={pre}>{JSON.stringify(out.parsed, null, 2)}</pre>
+              <FormattedAIReport response={out.parsed} title="Parsed workflow" />
             </div>
           )}
           {out.saved && (
             <div>
               <h4 style={{ color: '#a5b4fc' }}>Saved</h4>
-              <pre style={pre}>{JSON.stringify(out.saved, null, 2)}</pre>
+              <FormattedAIReport response={out.saved} title="Saved workflow" />
             </div>
           )}
           {out.raw_ai_output && (
             <div>
               <h4 style={{ color: '#a5b4fc' }}>Raw AI output</h4>
-              <pre style={pre}>{out.raw_ai_output}</pre>
+              <FormattedAIReport response={out.raw_ai_output} title="AI output" />
             </div>
           )}
           {out.error && <p style={{ color: '#ef4444' }}>{out.error}</p>}
@@ -267,6 +276,8 @@ export function WorkflowBuilderPage() {
 // 5. Compliance Watchdog Page
 // =========================================================================
 export function ComplianceWatchdogPage() {
+  const fullAIExamples = useFullAIExamples();
+
   const [days, setDays] = useState(30);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -293,13 +304,13 @@ export function ComplianceWatchdogPage() {
   const colorFor = (u) => u === 'red' ? '#ef4444' : u === 'orange' ? '#f97316' : u === 'yellow' ? '#eab308' : '#22c55e';
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24 }} data-full-ai-workspace="ComplianceWatchdogPage"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <h1 style={h1}>🛡️ Compliance Deadline Watchdog</h1>
       <p style={subText}>Show upcoming compliance deadlines; auto-draft remediation memos.</p>
 
       <div style={card}>
         <label style={{ color: '#cbd5e1', display: 'block', marginBottom: 8 }}>Window (days ahead):</label>
-        <input style={{ ...input, width: 120 }} type="number" value={days} onChange={e => setDays(parseInt(e.target.value) || 30)} />
+        <input style={{ ...input, width: 120 }} type="number" value={days} onChange={e => setDays(parseInt(e.target.value) || 30)} data-full-ai-field={fullAIExamples.bind({ current: days, change: e => setDays(parseInt(e.target.value) || 30), label: "days", manual: false, json: false, sample: 30 }, "p1-13581", undefined)} />
         <button style={btn} onClick={load}>Refresh</button>
       </div>
 
@@ -349,6 +360,8 @@ export function ComplianceWatchdogPage() {
 // 6. Process Analytics Page (existing /api/analytics/processes)
 // =========================================================================
 export function ProcessAnalyticsPage() {
+  const fullAIExamples = useFullAIExamples();
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hourlyRate, setHourlyRate] = useState(75);
@@ -364,13 +377,13 @@ export function ProcessAnalyticsPage() {
   useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24 }} data-full-ai-workspace="ProcessAnalyticsPage"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <h1 style={h1}>📈 Process Analytics</h1>
       <p style={subText}>Workflow & process automation KPIs, ROI, and exception rates.</p>
 
       <div style={card}>
         <label style={{ color: '#cbd5e1' }}>Hourly rate ($): </label>
-        <input style={{ ...input, width: 120, display: 'inline-block', marginLeft: 8 }} type="number" value={hourlyRate} onChange={e => setHourlyRate(parseInt(e.target.value) || 75)} />
+        <input style={{ ...input, width: 120, display: 'inline-block', marginLeft: 8 }} type="number" value={hourlyRate} onChange={e => setHourlyRate(parseInt(e.target.value) || 75)} data-full-ai-field={fullAIExamples.bind({ current: hourlyRate, change: e => setHourlyRate(parseInt(e.target.value) || 75), label: "hourlyRate", manual: false, json: false, sample: 75 }, "p1-16807", undefined)} />
         <button style={{ ...btn, marginLeft: 8 }} onClick={load}>Refresh</button>
       </div>
 
@@ -427,6 +440,8 @@ function KPI({ label, value, accent = '#a5b4fc' }) {
 // 7. Notifications Page (existing /api/notifications/send)
 // =========================================================================
 export function NotificationsPage() {
+  const fullAIExamples = useFullAIExamples();
+
   const [type, setType] = useState('workflow_completed');
   const [to, setTo] = useState('');
   const [payload, setPayload] = useState('{}');
@@ -445,22 +460,22 @@ export function NotificationsPage() {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24 }} data-full-ai-workspace="NotificationsPage"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <h1 style={h1}>🔔 Notifications</h1>
       <p style={subText}>Send workflow_completed / approval_needed / process_anomaly / custom email notifications.</p>
 
       <div style={card}>
-        <select style={input} value={type} onChange={e => setType(e.target.value)}>
+        <select style={input} value={type} onChange={e => setType(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: type, change: e => setType(e.target.value), label: "type", manual: false, json: false, sample: 'workflow_completed' }, "p1-20668", undefined)}>
           <option value="workflow_completed">workflow_completed</option>
           <option value="approval_needed">approval_needed</option>
           <option value="process_anomaly">process_anomaly</option>
           <option value="custom">custom</option>
         </select>
-        <input style={input} placeholder="to (recipient email)" value={to} onChange={e => setTo(e.target.value)} />
-        <textarea style={{ ...input, minHeight: 140, fontFamily: 'monospace' }} placeholder='Payload as JSON e.g. {"workflowName":"Invoice Reconciliation"}' value={payload} onChange={e => setPayload(e.target.value)} />
+        <input style={input} placeholder="to (recipient email)" value={to} onChange={e => setTo(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: to, change: e => setTo(e.target.value), label: "to", manual: false, json: false, sample: '' }, "p1-21026", undefined)} />
+        <textarea style={{ ...input, minHeight: 140, fontFamily: 'monospace' }} placeholder='Payload as JSON e.g. {"workflowName":"Invoice Reconciliation"}' value={payload} onChange={e => setPayload(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: payload, change: e => setPayload(e.target.value), label: "payload", manual: false, json: true, sample: '{}' }, "p1-21142", undefined)} />
         <button style={btn} onClick={send} disabled={loading || !to}>{loading ? 'Sending...' : 'Send Notification'}</button>
       </div>
-      {result && <div style={card}><pre style={pre}>{JSON.stringify(result, null, 2)}</pre></div>}
+      {result && <div style={card}><FormattedAIReport response={result} /></div>}
     </div>
   );
 }
@@ -469,61 +484,76 @@ export function NotificationsPage() {
 // 8. AI Stream Page (process description streaming + RPA gen)
 // =========================================================================
 export function AIStreamPage() {
+  const fullAIExamples = useFullAIExamples();
+
   const [tab, setTab] = useState('analyze');
   const [text, setText] = useState('');
-  const [out, setOut] = useState('');
+  const [out, setOut] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [rpaForm, setRpaForm] = useState({ name: '', task_description: '', platform: 'UiPath' });
+  const [processes, setProcesses] = useState([]);
+  const [processId, setProcessId] = useState('');
+  const [rpaForm, setRpaForm] = useState({ name: '', task_description: '', target_application: '' });
+
+  useEffect(() => {
+    api.get('/process-mining?limit=100').then(({ data }) => {
+      const rows = Array.isArray(data?.data) ? data.data : [];
+      setProcesses(rows);
+    }).catch(() => setProcesses([]));
+  }, []);
 
   const stream = async () => {
-    setLoading(true); setOut('');
+    setLoading(true); setOut(null);
     const token = localStorage.getItem('token');
-    const url = `${api.defaults.baseURL}/ai/analyze-process/stream?description=${encodeURIComponent(text)}`;
+    const url = `${api.defaults.baseURL}/ai/analyze-process/stream?processId=${encodeURIComponent(processId)}`;
     try {
       const resp = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      if (!resp.ok) throw new Error(`Process analysis request failed (${resp.status}).`);
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
+      let pending = '';
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value);
-        // SSE chunks come in "data: {...}" lines
-        chunk.split('\n').forEach(line => {
-          if (line.startsWith('data: ')) {
-            try {
-              const payload = JSON.parse(line.slice(6));
-              if (payload.token) setOut(prev => prev + payload.token);
-              if (payload.content) setOut(prev => prev + payload.content);
-            } catch (_) {}
-          }
+        pending += decoder.decode(value, { stream: true });
+        const events = pending.split('\n\n');
+        pending = events.pop();
+        events.forEach((event) => {
+          const kind = event.match(/^event: (.+)$/m)?.[1];
+          const raw = event.match(/^data: (.+)$/m)?.[1];
+          if (!raw) return;
+          try {
+            const payload = JSON.parse(raw);
+            if (kind === 'result') setOut(payload);
+            if (kind === 'error') setOut({ error: payload.message || 'Analysis failed.' });
+          } catch (_) { setOut({ error: 'The stream returned invalid data.' }); }
         });
       }
     } catch (e) {
-      setOut('Error: ' + e.message);
+      setOut({ error: e.message });
     }
     setLoading(false);
   };
 
   const analyzeOnce = async () => {
-    setLoading(true); setOut('');
+    setLoading(true); setOut(null);
     try {
-      const r = await api.post('/ai/analyze-process-description', { description: text });
-      setOut(r.data?.analysis || JSON.stringify(r.data, null, 2));
-    } catch (e) { setOut('Error: ' + (e.response?.data?.error || e.message)); }
+      const r = await api.post('/ai/analyze-process-description', { process_description: text });
+      setOut(r.data?.analysis ?? r.data);
+    } catch (e) { setOut({ error: e.response?.data?.error || e.message }); }
     setLoading(false);
   };
 
   const generateRpa = async () => {
-    setLoading(true); setOut('');
+    setLoading(true); setOut(null);
     try {
       const r = await api.post('/ai/generate-rpa', rpaForm);
-      setOut(r.data?.script || r.data?.code || JSON.stringify(r.data, null, 2));
-    } catch (e) { setOut('Error: ' + (e.response?.data?.error || e.message)); }
+      setOut(r.data?.generated_script ?? r.data);
+    } catch (e) { setOut({ error: e.response?.data?.error || e.message }); }
     setLoading(false);
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24 }} data-full-ai-workspace="AIStreamPage"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <h1 style={h1}>🌊 AI Streaming Tools</h1>
       <p style={subText}>Live SSE streaming process analysis + RPA script generation.</p>
 
@@ -536,24 +566,22 @@ export function AIStreamPage() {
 
         {tab !== 'rpa' ? (
           <>
-            <textarea style={{ ...input, minHeight: 120 }} placeholder="Describe a business process..." value={text} onChange={e => setText(e.target.value)} />
-            <button style={btn} onClick={tab === 'analyze' ? stream : analyzeOnce} disabled={loading || !text.trim()}>
+            {tab === 'analyze' ? <><label style={subText}>Existing process record</label><select style={input} value={processId} onChange={e => setProcessId(e.target.value)}>{!processId && <option value="">Select a real process</option>}{processes.map(process => <option key={process.id} value={process.id}>{process.name}</option>)}</select>{!processes.length && <p style={subText}>A saved process is required for streaming analysis.</p>}</> : <textarea style={{ ...input, minHeight: 120 }} placeholder="Describe a business process..." value={text} onChange={e => setText(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: text, change: e => setText(e.target.value), label: "text", manual: false, json: false, sample: '' }, "p1-24607", undefined)} />}
+            <button style={btn} onClick={tab === 'analyze' ? stream : analyzeOnce} disabled={loading || (tab === 'analyze' ? !processId : !text.trim())}>
               {loading ? 'Working...' : tab === 'analyze' ? 'Stream Analyze' : 'Analyze'}
             </button>
           </>
         ) : (
           <>
-            <input style={input} placeholder="Script name" value={rpaForm.name} onChange={e => setRpaForm({ ...rpaForm, name: e.target.value })} />
-            <textarea style={{ ...input, minHeight: 100 }} placeholder="Task description" value={rpaForm.task_description} onChange={e => setRpaForm({ ...rpaForm, task_description: e.target.value })} />
-            <select style={input} value={rpaForm.platform} onChange={e => setRpaForm({ ...rpaForm, platform: e.target.value })}>
-              <option>UiPath</option><option>Blue Prism</option><option>Automation Anywhere</option><option>Power Automate</option><option>Python</option>
-            </select>
-            <button style={btn} onClick={generateRpa} disabled={loading || !rpaForm.task_description}>{loading ? 'Generating...' : 'Generate RPA Script'}</button>
+            <input style={input} placeholder="Script name" value={rpaForm.name} onChange={e => setRpaForm({ ...rpaForm, name: e.target.value })} data-full-ai-field={fullAIExamples.bind({ current: rpaForm.name, change: e => setRpaForm({ ...rpaForm, name: e.target.value }), label: "rpaForm.name", manual: false, json: false, sample: '' }, "p1-25039", undefined)} />
+            <textarea style={{ ...input, minHeight: 100 }} placeholder="Task description" value={rpaForm.task_description} onChange={e => setRpaForm({ ...rpaForm, task_description: e.target.value })} data-full-ai-field={fullAIExamples.bind({ current: rpaForm.task_description, change: e => setRpaForm({ ...rpaForm, task_description: e.target.value }), label: "rpaForm.task_description", manual: false, json: false, sample: '' }, "p1-25187", undefined)} />
+            <input style={input} placeholder="Target application (for example, a browser)" value={rpaForm.target_application} onChange={e => setRpaForm({ ...rpaForm, target_application: e.target.value })} data-full-ai-field={fullAIExamples.bind({ current: rpaForm.target_application, change: e => setRpaForm({ ...rpaForm, target_application: e.target.value }), label: "rpaForm.target_application", manual: false, json: false, sample: 'Browser' }, "p1-25390", undefined)} />
+            <button style={btn} onClick={generateRpa} disabled={loading || !rpaForm.task_description || !rpaForm.target_application}>{loading ? 'Generating...' : 'Generate RPA Script'}</button>
           </>
         )}
       </div>
 
-      {out && <div style={card}><pre style={pre}>{out}</pre></div>}
+      {out && <div style={card}><FormattedAIReport response={out} title="Analysis result" /></div>}
     </div>
   );
 }
@@ -576,6 +604,8 @@ const ALLOWED_WEBHOOK_EVENTS = [
 ];
 
 export function WebhooksPage() {
+  const fullAIExamples = useFullAIExamples();
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -637,9 +667,9 @@ export function WebhooksPage() {
 
       <div style={card}>
         <h3 style={{ color: '#e2e8f0' }}>+ New Subscription</h3>
-        <form onSubmit={submit}>
+        <form onSubmit={submit} data-full-ai-workspace="WebhooksPage"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
           <input style={input} type="url" placeholder="https://example.com/hooks/biz-auto" value={form.url}
-            onChange={(e) => setForm({ ...form, url: e.target.value })} required />
+            onChange={(e) => setForm({ ...form, url: e.target.value })} required data-full-ai-field={fullAIExamples.bind({ current: form.url, change: (e) => setForm({ ...form, url: e.target.value }), label: "form.url", manual: false, json: false, sample: '' }, "p1-28659", undefined)} />
           <input style={input} type="text" placeholder="Signing Secret (optional)" value={form.secret}
             onChange={(e) => setForm({ ...form, secret: e.target.value })} />
           <div style={{ marginBottom: 12 }}>
@@ -647,7 +677,7 @@ export function WebhooksPage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {ALLOWED_WEBHOOK_EVENTS.map((ev) => (
                 <label key={ev} style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#cbd5e1', fontSize: 13 }}>
-                  <input type="checkbox" checked={form.events.includes(ev)} onChange={() => toggleEvent(ev)} />
+                  <input type="checkbox" checked={form.events.includes(ev)} onChange={() => toggleEvent(ev)} data-full-ai-field={fullAIExamples.bind({ current: form.events.includes(ev), change: () => toggleEvent(ev), label: "form.events.includes(ev)", manual: false, json: false }, "p1-29408", [(typeof ev === 'object' ? ev?.key ?? ev?.name ?? ev?.id ?? '' : ev)].join(":"))} />
                   <span>{ev}</span>
                 </label>
               ))}
@@ -862,6 +892,8 @@ const AI_TOOLS = [
 ];
 
 export function AIToolboxPage() {
+  const fullAIExamples = useFullAIExamples();
+
   const [activeKey, setActiveKey] = useState(AI_TOOLS[0].key);
   const [forms, setForms] = useState({});
   const [loading, setLoading] = useState(false);
@@ -916,16 +948,8 @@ export function AIToolboxPage() {
     setLoading(false);
   };
 
-  // Pull a friendly preview from the response
-  const preview = (() => {
-    if (!result) return null;
-    const v = result[tool.resultKey];
-    if (typeof v === 'string') return v;
-    return JSON.stringify(result, null, 2);
-  })();
-
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24 }} data-full-ai-workspace="AIToolboxPage">
       <h1 style={h1}>{'\u{1F9E0}'} AI Toolbox</h1>
       <p style={subText}>Direct access to the generic <code>/api/ai/*</code> helpers — chat, document/contract analysis, expense review, agenda generation, vendor evaluation, and more. Each call is authenticated and persisted to <code>ai_results</code>.</p>
 
@@ -934,14 +958,14 @@ export function AIToolboxPage() {
         <select
           style={input}
           value={activeKey}
-          onChange={(e) => { setActiveKey(e.target.value); setResult(null); setError(''); }}
+          onChange={(e) => { setActiveKey(e.target.value); setResult(null); setError(''); }} data-full-ai-field={fullAIExamples.bind({ current: activeKey, change: (e) => { setActiveKey(e.target.value); setResult(null); setError(''); }, label: "activeKey", manual: false, json: false, sample: AI_TOOLS[0].key }, "p1-39826", undefined)}
         >
           {AI_TOOLS.map((t) => (
             <option key={t.key} value={t.key}>{t.label}</option>
           ))}
         </select>
 
-        <form onSubmit={submit}>
+        <form onSubmit={submit} data-full-ai-workspace="AIToolboxPage"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
           {tool.fields.map((f) => (
             <div key={f.name} style={{ marginBottom: 8 }}>
               <label style={{ display: 'block', color: '#cbd5e1', marginBottom: 4, fontSize: 13 }}>
@@ -952,7 +976,7 @@ export function AIToolboxPage() {
                   style={{ ...input, minHeight: 100 }}
                   value={form[f.name] || ''}
                   onChange={(e) => updateField(f.name, e.target.value)}
-                  required={f.required}
+                  required={f.required} data-full-ai-field={fullAIExamples.bind({ current: form[f.name] || '', change: (e) => updateField(f.name, e.target.value), label: "form[f.name]", manual: false, json: false }, "p1-40478", [(typeof f === 'object' ? f?.key ?? f?.name ?? f?.id ?? '' : f),f.name].join(":"))}
                 />
               ) : (
                 <input
@@ -960,7 +984,7 @@ export function AIToolboxPage() {
                   type={f.type || 'text'}
                   value={form[f.name] || ''}
                   onChange={(e) => updateField(f.name, e.target.value)}
-                  required={f.required}
+                  required={f.required} data-full-ai-field={fullAIExamples.bind({ current: form[f.name] || '', change: (e) => updateField(f.name, e.target.value), label: "form[f.name]", manual: false, json: false }, "p1-40755", [(typeof f === 'object' ? f?.key ?? f?.name ?? f?.id ?? '' : f),f.name].join(":"))}
                 />
               )}
             </div>
@@ -980,7 +1004,7 @@ export function AIToolboxPage() {
       {result && (
         <div style={card}>
           <h3 style={{ color: '#e2e8f0', marginTop: 0 }}>Result</h3>
-          <pre style={pre}>{preview}</pre>
+          <FormattedAIReport response={result[tool.resultKey] ?? result} title={tool.label} />
         </div>
       )}
     </div>
@@ -992,6 +1016,8 @@ export function AIToolboxPage() {
 // Surfaces /api/backlog/* endpoints: webhook delivery, agent runs, RAG, white-label.
 // =========================================================================
 export function BacklogToolsPage() {
+  const fullAIExamples = useFullAIExamples();
+
   const [tab, setTab] = useState('agents');
   const [busy, setBusy] = useState(false);
   const [out, setOut] = useState(null);
@@ -1086,7 +1112,7 @@ export function BacklogToolsPage() {
   );
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24 }} data-full-ai-workspace="BacklogToolsPage"><FullAIExamples controller={fullAIExamples} disabled={Boolean(busy)} />
       <h1 style={h1}>Backlog Tools</h1>
       <p style={subText}>Apply pass 5 — multi-agent orchestration, RAG, white-label tenants, signed webhook delivery.</p>
       <div style={{ marginBottom: 16 }}>
@@ -1099,9 +1125,9 @@ export function BacklogToolsPage() {
       {tab === 'agents' && (
         <div style={card}>
           <label style={{ color: '#cbd5e1' }}>Goal</label>
-          <textarea value={goal} onChange={e => setGoal(e.target.value)} rows={3} style={input}/>
+          <textarea value={goal} onChange={e => setGoal(e.target.value)} rows={3} style={input} data-full-ai-field={fullAIExamples.bind({ current: goal, change: e => setGoal(e.target.value), label: "goal", manual: false, json: false, sample: 'Reduce invoice approval time from 5 days to 2 days' }, "p1-46099", undefined)}/>
           <label style={{ color: '#cbd5e1' }}>Iterations (1-3)</label>
-          <input type="number" min={1} max={3} value={iters} onChange={e => setIters(parseInt(e.target.value) || 1)} style={input}/>
+          <input type="number" min={1} max={3} value={iters} onChange={e => setIters(parseInt(e.target.value) || 1)} style={input} data-full-ai-field={fullAIExamples.bind({ current: iters, change: e => setIters(parseInt(e.target.value) || 1), label: "iters", manual: false, json: false, sample: 1 }, "p1-46268", undefined)}/>
           <button onClick={runAgents} disabled={busy} style={btn}>{busy ? 'Running...' : 'Run Pipeline'}</button>
         </div>
       )}
@@ -1110,13 +1136,13 @@ export function BacklogToolsPage() {
         <>
           <div style={card}>
             <h3 style={{ color: '#e2e8f0', marginTop: 0 }}>Add document</h3>
-            <input value={docTitle} onChange={e => setDocTitle(e.target.value)} placeholder="title" style={input}/>
-            <textarea value={docContent} onChange={e => setDocContent(e.target.value)} rows={5} placeholder="playbook content" style={input}/>
+            <input value={docTitle} onChange={e => setDocTitle(e.target.value)} placeholder="title" style={input} data-full-ai-field={fullAIExamples.bind({ current: docTitle, change: e => setDocTitle(e.target.value), label: "docTitle", manual: false, json: false, sample: '' }, "p1-46685", undefined)}/>
+            <textarea value={docContent} onChange={e => setDocContent(e.target.value)} rows={5} placeholder="playbook content" style={input} data-full-ai-field={fullAIExamples.bind({ current: docContent, change: e => setDocContent(e.target.value), label: "docContent", manual: false, json: false, sample: '' }, "p1-46801", undefined)}/>
             <button onClick={addDoc} disabled={busy || !docContent} style={btn}>Add</button>
           </div>
           <div style={card}>
             <h3 style={{ color: '#e2e8f0', marginTop: 0 }}>Ask</h3>
-            <input value={question} onChange={e => setQuestion(e.target.value)} placeholder="question" style={input}/>
+            <input value={question} onChange={e => setQuestion(e.target.value)} placeholder="question" style={input} data-full-ai-field={fullAIExamples.bind({ current: question, change: e => setQuestion(e.target.value), label: "question", manual: false, json: false, sample: '' }, "p1-47151", undefined)}/>
             <button onClick={askRag} disabled={busy || !question} style={btn}>Query</button>
           </div>
           <div style={card}>
@@ -1129,9 +1155,9 @@ export function BacklogToolsPage() {
       {tab === 'whitelabel' && (
         <>
           <div style={card}>
-            <input value={whSlug} onChange={e => setWhSlug(e.target.value)} placeholder="slug (lowercase-dashes)" style={input}/>
-            <input value={whBrand} onChange={e => setWhBrand(e.target.value)} placeholder="brand name" style={input}/>
-            <input value={whColor} onChange={e => setWhColor(e.target.value)} placeholder="#hex" style={input}/>
+            <input value={whSlug} onChange={e => setWhSlug(e.target.value)} placeholder="slug (lowercase-dashes)" style={input} data-full-ai-field={fullAIExamples.bind({ current: whSlug, change: e => setWhSlug(e.target.value), label: "whSlug", manual: false, json: false, sample: 'acme-co' }, "p1-47678", undefined)}/>
+            <input value={whBrand} onChange={e => setWhBrand(e.target.value)} placeholder="brand name" style={input} data-full-ai-field={fullAIExamples.bind({ current: whBrand, change: e => setWhBrand(e.target.value), label: "whBrand", manual: false, json: false, sample: 'Acme Co' }, "p1-47808", undefined)}/>
+            <input value={whColor} onChange={e => setWhColor(e.target.value)} placeholder="#hex" style={input} data-full-ai-field={fullAIExamples.bind({ current: whColor, change: e => setWhColor(e.target.value), label: "whColor", manual: false, json: false, sample: '#6366f1' }, "p1-47927", undefined)}/>
             <button onClick={addTenant} disabled={busy} style={btn}>Save tenant</button>
           </div>
           <div style={card}>
@@ -1144,9 +1170,9 @@ export function BacklogToolsPage() {
       {tab === 'deliveries' && (
         <>
           <div style={card}>
-            <input value={webhookId} onChange={e => setWebhookId(e.target.value)} placeholder="webhook id (numeric)" style={input}/>
-            <input value={event} onChange={e => setEvent(e.target.value)} placeholder="event (e.g. workflow.completed)" style={input}/>
-            <textarea value={payloadStr} onChange={e => setPayloadStr(e.target.value)} rows={4} style={input}/>
+            <input value={webhookId} onChange={e => setWebhookId(e.target.value)} placeholder="webhook id (numeric)" style={input} data-full-ai-field={fullAIExamples.bind({ current: webhookId, change: e => setWebhookId(e.target.value), label: "webhookId", manual: false, json: false, sample: '' }, "p1-48448", undefined)}/>
+            <input value={event} onChange={e => setEvent(e.target.value)} placeholder="event (e.g. workflow.completed)" style={input} data-full-ai-field={fullAIExamples.bind({ current: event, change: e => setEvent(e.target.value), label: "event", manual: false, json: false, sample: 'workflow.completed' }, "p1-48581", undefined)}/>
+            <textarea value={payloadStr} onChange={e => setPayloadStr(e.target.value)} rows={4} style={input} data-full-ai-field={fullAIExamples.bind({ current: payloadStr, change: e => setPayloadStr(e.target.value), label: "payloadStr", manual: false, json: false, sample: '{"hello":"world"}' }, "p1-48717", undefined)}/>
             <button onClick={sendDelivery} disabled={busy || !webhookId} style={btn}>Send</button>
           </div>
           <div style={card}>
@@ -1160,7 +1186,7 @@ export function BacklogToolsPage() {
       {out && (
         <div style={card}>
           <h3 style={{ color: '#e2e8f0', marginTop: 0 }}>Result</h3>
-          <pre style={pre}>{JSON.stringify(out, null, 2)}</pre>
+          <FormattedAIReport response={out} title="Result" />
         </div>
       )}
     </div>

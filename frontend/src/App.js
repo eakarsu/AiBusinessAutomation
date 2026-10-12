@@ -1,3 +1,5 @@
+import AIReportLibrary from "./components/AIReportLibrary";
+import FormattedAIReport, { reportText } from "./components/FormattedAIReport";
 import React, { useState, useEffect, useCallback, useRef, createContext, useContext, Component } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams, Link } from 'react-router-dom';
 import api from './services/api';
@@ -191,6 +193,14 @@ const AuthProvider = ({ children }) => {
     return response.data;
   };
 
+  const demoLogin = async () => {
+    const response = await api.post('/auth/demo-login');
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+    setUser(response.data.user);
+    return response.data;
+  };
+
   const register = async (name, email, password) => {
     const response = await api.post('/auth/register', { name, email, password });
     localStorage.setItem('token', response.data.token);
@@ -220,7 +230,7 @@ const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, login, demoLogin, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
@@ -239,12 +249,20 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, register } = useAuth();
+  const { login, demoLogin, register } = useAuth();
   const navigate = useNavigate();
 
-  const handleAutoFill = () => {
-    setEmail(process.env.REACT_APP_DEMO_EMAIL || '');
-    setPassword(process.env.REACT_APP_DEMO_PASSWORD || '');
+  const handleDemoLogin = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      await demoLogin();
+      navigate('/dashboard');
+    } catch (failure) {
+      setError(failure.response?.data?.error || 'Demo sign-in is unavailable.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogin = async (e) => {
@@ -333,8 +351,8 @@ const LoginPage = () => {
 
         {mode === 'login' && (
           <>
-            <button onClick={handleAutoFill} className="btn btn-autofill">
-              Auto Fill Demo Credentials
+            <button type="button" onClick={handleDemoLogin} className="btn btn-autofill" disabled={loading}>
+              Sign in as Demo
             </button>
             <form onSubmit={handleLogin}>
               <div className="form-group">
@@ -794,14 +812,17 @@ const ListPage = ({ title, endpoint, columns, icon, formFields }) => {
 
       const response = await api.get(`/${endpoint}?${params.toString()}`);
       const res = response.data;
-      if (res.data && res.pagination) {
+      if (res && Array.isArray(res.data) && res.pagination) {
         setData(res.data);
         setPagination(prev => ({ ...prev, total: res.pagination.total, totalPages: res.pagination.totalPages }));
+      } else if (Array.isArray(res)) {
+        setData(res);
+        setPagination(prev => ({ ...prev, total: res.length, totalPages: 1 }));
       } else {
-        // Fallback for non-paginated response
-        setData(Array.isArray(res) ? res : []);
+        throw new TypeError(`Invalid list response for ${endpoint}: expected an array or paginated data array`);
       }
     } catch (error) {
+      setData([]);
       console.error('Error fetching data:', error);
       addToast('Error fetching data', 'error');
     } finally {
@@ -935,13 +956,13 @@ const ListPage = ({ title, endpoint, columns, icon, formFields }) => {
     if (column.key.includes('date') && value) {
       return new Date(value).toLocaleDateString();
     }
-    if (typeof value === 'object') return JSON.stringify(value);
+    if (typeof value === 'object') return isAIOutputField(column.key) ? reportText(value) : JSON.stringify(value);
     if (typeof value === 'string' && value.length > 60) return value.substring(0, 60) + '...';
     return value;
   };
 
   return (
-    <Layout>
+    <><AIReportLibrary floating /><Layout>
       <div className="back-button" onClick={() => navigate('/dashboard')}>← Back to Dashboard</div>
       <div className="page-header">
         <h1>{icon} {title}</h1>
@@ -1113,7 +1134,7 @@ const ListPage = ({ title, endpoint, columns, icon, formFields }) => {
           onCancel={() => setShowBulkUpdate(false)}
         />
       )}
-    </Layout>
+    </Layout></>
   );
 };
 
@@ -1296,68 +1317,11 @@ const FormModal = ({ title, endpoint, formFields, onClose, onSuccess, mode, init
 // AI ANALYSIS DISPLAY
 // ============================================
 const AIAnalysisDisplay = ({ content }) => {
-  if (!content) return null;
-
-  const renderContent = (text) => {
-    const lines = text.split('\n');
-    const elements = [];
-    let currentList = [];
-
-    lines.forEach((line, index) => {
-      const trimmedLine = line.trim();
-
-      if (trimmedLine.startsWith('## ')) {
-        if (currentList.length > 0) {
-          elements.push(<ul key={`list-${index}`} className="ai-list">{currentList.map((item, i) => <li key={i}>{item}</li>)}</ul>);
-          currentList = [];
-        }
-        elements.push(<h3 key={index} className="ai-section-header">{trimmedLine.replace('## ', '')}</h3>);
-      } else if (trimmedLine.startsWith('### ')) {
-        if (currentList.length > 0) {
-          elements.push(<ul key={`list-${index}`} className="ai-list">{currentList.map((item, i) => <li key={i}>{item}</li>)}</ul>);
-          currentList = [];
-        }
-        elements.push(<h4 key={index} className="ai-subsection-header">{trimmedLine.replace('### ', '')}</h4>);
-      } else if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('* ')) {
-        currentList.push(trimmedLine.substring(2));
-      } else if (/^\d+\.\s/.test(trimmedLine)) {
-        currentList.push(trimmedLine.replace(/^\d+\.\s/, ''));
-      } else if (trimmedLine.includes('**') && trimmedLine.includes(':')) {
-        if (currentList.length > 0) {
-          elements.push(<ul key={`list-${index}`} className="ai-list">{currentList.map((item, i) => <li key={i}>{item}</li>)}</ul>);
-          currentList = [];
-        }
-        const parts = trimmedLine.split(':');
-        const label = parts[0].replace(/\*\*/g, '');
-        const value = parts.slice(1).join(':').replace(/\*\*/g, '');
-        elements.push(<div key={index} className="ai-metric"><span className="ai-metric-label">{label}:</span><span className="ai-metric-value">{value}</span></div>);
-      } else if (trimmedLine.startsWith('```')) {
-        // skip
-      } else if (trimmedLine.length > 0) {
-        if (currentList.length > 0) {
-          elements.push(<ul key={`list-${index}`} className="ai-list">{currentList.map((item, i) => <li key={i}>{item}</li>)}</ul>);
-          currentList = [];
-        }
-        elements.push(<p key={index} className="ai-paragraph">{trimmedLine}</p>);
-      }
-    });
-
-    if (currentList.length > 0) {
-      elements.push(<ul key="list-final" className="ai-list">{currentList.map((item, i) => <li key={i}>{item}</li>)}</ul>);
-    }
-    return elements;
-  };
-
-  return (
-    <div className="ai-analysis-display">
-      <div className="ai-analysis-header">
-        <div className="ai-badge"><span className="ai-icon">🤖</span><span>AI Analysis</span></div>
-        <span className="ai-powered">Powered by Claude</span>
-      </div>
-      <div className="ai-analysis-content">{renderContent(content)}</div>
-    </div>
-  );
+  if (content === null || content === undefined) return null;
+  return <FormattedAIReport response={content} title="AI analysis" />;
 };
+
+const isAIOutputField = (key) => /^(?:ai_|generated_script$|agenda$|analysis$|evaluation$|recommendations$|resolution$|suggestion$|extracted$)/.test(key);
 
 // ============================================
 // DETAIL PAGE (with ConfirmDialog + Toast)
@@ -1379,7 +1343,7 @@ const DetailPage = ({ title, endpoint, fields, formFields, aiAction, aiLabel }) 
       setItem(response.data);
       const aiFields = ['ai_analysis', 'ai_suggestions', 'ai_evaluation', 'ai_recommendations', 'ai_resolution', 'generated_script', 'agenda'];
       for (const field of aiFields) {
-        if (response.data[field]) {
+        if (response.data[field] !== null && response.data[field] !== undefined) {
           setAiResult(response.data[field]);
           break;
         }
@@ -1400,9 +1364,8 @@ const DetailPage = ({ title, endpoint, fields, formFields, aiAction, aiLabel }) 
     setAiLoading(true);
     try {
       const response = await api.post(`/${endpoint}/${id}/${aiAction}`);
-      const result = response.data.analysis || response.data.suggestion || response.data.evaluation ||
-                     response.data.agenda || response.data.extracted || response.data.content ||
-                     response.data.recommendations || response.data.resolution || response.data.script;
+      const result = ['analysis', 'suggestion', 'evaluation', 'agenda', 'extracted', 'content', 'recommendations', 'resolution', 'script']
+        .map((key) => response.data[key]).find((value) => value !== null && value !== undefined);
       setAiResult(result);
       fetchItem();
       addToast('AI analysis complete', 'success');
@@ -1439,7 +1402,7 @@ const DetailPage = ({ title, endpoint, fields, formFields, aiAction, aiLabel }) 
         field.key === 'implementation_cost' || field.key === 'annual_savings' || field.key === 'current_fte_cost') {
       return `$${parseFloat(value).toLocaleString()}`;
     }
-    if (typeof value === 'object') return JSON.stringify(value, null, 2);
+    if (typeof value === 'object') return isAIOutputField(field.key) ? <FormattedAIReport response={value} title={field.label} /> : JSON.stringify(value, null, 2);
     return value;
   };
 
@@ -1485,7 +1448,7 @@ const DetailPage = ({ title, endpoint, fields, formFields, aiAction, aiLabel }) 
               </div>
             ))}
           </div>
-          {aiResult && <AIAnalysisDisplay content={aiResult} />}
+          {aiResult !== null && aiResult !== undefined && <AIAnalysisDisplay content={aiResult} />}
         </div>
       </div>
 

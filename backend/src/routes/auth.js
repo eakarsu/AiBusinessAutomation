@@ -6,11 +6,9 @@ const pool = require('../config/database');
 const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 
-// Login
-router.post('/login', async (req, res) => {
+// Both sign-in paths validate the stored account and use the same tenant-bound token.
+async function signIn(email, password, res) {
   try {
-    const { email, password } = req.body;
-
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
 
@@ -44,6 +42,17 @@ router.post('/login', async (req, res) => {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Server error' });
   }
+}
+
+// Login
+router.post('/login', (req, res) => signIn(req.body?.email, req.body?.password, res));
+
+// Demo access uses the existing configured account without sending its password to the browser.
+router.post('/demo-login', (req, res) => {
+  if (!process.env.DEMO_EMAIL || !process.env.DEMO_PASSWORD) {
+    return res.status(503).json({ error: 'Demo credentials are not configured.' });
+  }
+  return signIn(process.env.DEMO_EMAIL, process.env.DEMO_PASSWORD, res);
 });
 
 // Register
