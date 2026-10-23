@@ -27,4 +27,5 @@ app.use('/api/notifications', auth, require('./routes/notifications'));
 app.use('/api/webhooks', auth, require('./routes/webhooks'));
 app.use('/api/backlog', auth, require('./routes/backlogPass5'));
 app.use('/api/custom-views', auth, require('./routes/customViews'));
+app.use('/api/feature-pack', auth, require('./featurePack').createFeaturePackRouter());
 app.use('/api',auth,(_req,res)=>res.status(410).json({error:'legacy_route_quarantined',replacement:'/api/authoritative/automation'}));app.use((err,_req,res,_next)=>{console.error(err.message);const status=/scope_denied/.test(err.message)?403:/missing_|required|invalid_|unsupported|mismatch|duplicate|not_applicable/.test(err.message)?422:500;res.status(status).json({error:status===500?'internal_error':err.message});});async function start(){if(!(await pool.query("SELECT to_regclass('automation_runs') AS table_name")).rows[0].table_name)throw new Error('Database migration missing; run npm run migrate');app.listen(PORT,()=>console.log(`automation workflow API listening on ${PORT}`));}if(require.main===module)start().catch(e=>{console.error(e.message);process.exit(1);});module.exports={app,start};
